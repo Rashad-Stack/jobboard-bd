@@ -3,10 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     const user = session?.user;
@@ -17,13 +14,11 @@ export async function POST(
     const { id: jobId } = await params;
     const userId = user.id;
 
-   
     const job = await prisma.job.findUnique({ where: { id: jobId } });
     if (!job || job.status !== "OPEN") {
       return NextResponse.json({ error: "Job is closed or not found" }, { status: 400 });
     }
 
-  
     const application = await prisma.application.create({
       data: {
         jobId,
@@ -34,13 +29,11 @@ export async function POST(
 
     return NextResponse.json({ message: "Applied successfully", application }, { status: 201 });
   } catch (error: unknown) {
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      error.code === "P2002"
-    ) {
-      return NextResponse.json({ error: "You have already applied for this job." }, { status: 409 });
+    if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
+      return NextResponse.json(
+        { error: "You have already applied for this job." },
+        { status: 409 },
+      );
     }
     console.error("Apply error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

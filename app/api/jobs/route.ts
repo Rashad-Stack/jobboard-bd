@@ -11,7 +11,9 @@ export async function GET(req: Request) {
   const jobs = await prisma.job.findMany({
     where: {
       status: "OPEN",
-      ...(title ? { OR: [{ title: { contains: title, mode: "insensitive" } }, { skills: { has: title } }] } : {}),
+      ...(title
+        ? { OR: [{ title: { contains: title, mode: "insensitive" } }, { skills: { has: title } }] }
+        : {}),
       ...(location ? { location: { contains: location, mode: "insensitive" } } : {}),
       ...(type ? { type: type as "FULL_TIME" | "PART_TIME" | "REMOTE" | "CONTRACT" } : {}),
     },
@@ -28,7 +30,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Employer access required." }, { status: 403 });
     }
     const result = jobSchema.safeParse(await req.json());
-    if (!result.success) return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
+    if (!result.success)
+      return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
     const job = await prisma.job.create({ data: { ...result.data, employerId: user.id } });
     return NextResponse.json({ job }, { status: 201 });
   } catch (error) {

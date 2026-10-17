@@ -9,7 +9,10 @@ export async function GET(_: Request, { params }: Context) {
   const { id } = await params;
   const job = await prisma.job.findUnique({
     where: { id },
-    include: { employer: { select: { name: true, email: true } }, _count: { select: { applications: true } } },
+    include: {
+      employer: { select: { name: true, email: true } },
+      _count: { select: { applications: true } },
+    },
   });
   if (!job) return NextResponse.json({ error: "Job not found." }, { status: 404 });
   return NextResponse.json({ job });
@@ -25,7 +28,8 @@ export async function PATCH(req: Request, { params }: Context) {
       return NextResponse.json({ error: "You do not own this job." }, { status: 403 });
     }
     const result = jobSchema.partial().safeParse(await req.json());
-    if (!result.success) return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
+    if (!result.success)
+      return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
     const job = await prisma.job.update({ where: { id }, data: result.data });
     return NextResponse.json({ job });
   } catch (error) {

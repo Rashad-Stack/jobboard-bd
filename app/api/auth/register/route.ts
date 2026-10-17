@@ -13,11 +13,16 @@ const schema = z.object({
 export async function POST(req: Request) {
   try {
     const result = schema.safeParse(await req.json());
-    if (!result.success) return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
+    if (!result.success)
+      return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
     const data = result.data;
     const email = data.email.toLowerCase();
     const exists = await prisma.user.findUnique({ where: { email } });
-    if (exists) return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 });
+    if (exists)
+      return NextResponse.json(
+        { error: "An account with this email already exists." },
+        { status: 409 },
+      );
     const user = await prisma.user.create({
       data: {
         name: data.name,

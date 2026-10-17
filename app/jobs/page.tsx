@@ -68,9 +68,13 @@ export default function JobListingsPage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10">
       <div className="mb-8">
-        <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-700">Opportunities across Bangladesh</p>
+        <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-700">
+          Opportunities across Bangladesh
+        </p>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Find your next role</h1>
-        <p className="mt-2 text-slate-600">Search open positions by role, location, or work arrangement.</p>
+        <p className="mt-2 text-slate-600">
+          Search open positions by role, location, or work arrangement.
+        </p>
       </div>
 
       {/* Search & Filter Bar */}
@@ -122,14 +126,24 @@ export default function JobListingsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {jobs.map((job) => (
-            <div key={job.id} className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div
+              key={job.id}
+              className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
               <div>
                 <h2 className="text-xl font-semibold text-slate-900">{job.title}</h2>
-                <p className="mt-1 font-medium text-slate-600">{job.company} · {job.location}</p>
-                <p className="mt-3 text-sm text-slate-500">{job.type.replace("_", " ")} · {job.salary || "Salary negotiable"}</p>
+                <p className="mt-1 font-medium text-slate-600">
+                  {job.company} · {job.location}
+                </p>
+                <p className="mt-3 text-sm text-slate-500">
+                  {job.type.replace("_", " ")} · {job.salary || "Salary negotiable"}
+                </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {job.skills.map((skill: string, idx: number) => (
-                    <span key={idx} className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+                    <span
+                      key={idx}
+                      className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700"
+                    >
                       {skill}
                     </span>
                   ))}

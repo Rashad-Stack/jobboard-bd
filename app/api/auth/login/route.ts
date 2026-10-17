@@ -3,6 +3,6 @@ import { NextResponse } from "next/server";
 export async function POST() {
   return NextResponse.json(
     { error: "Use the NextAuth credentials flow at /api/auth/callback/credentials." },
-    { status: 405 }
+    { status: 405 },
   );
 }
