@@ -39,7 +39,7 @@ export default function NewJobPage() {
         title="Post a new job"
         description="Give candidates the information they need to decide if this role is right for them."
       />
-      <JobForm loading={loading} error={error} onSubmit={submit} />
+      <JobForm loading={loading} error={error} onSubmit={submit} submitLabel="Publish job" />
     </main>
   );
 }

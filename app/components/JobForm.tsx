@@ -6,12 +6,28 @@ type JobFormProps = {
   loading: boolean;
   error: string;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  initialValues?: {
+    title: string;
+    company: string;
+    location: string;
+    salary?: string | null;
+    type: string;
+    description: string;
+    skills: string[];
+  };
+  submitLabel?: string;
 };
 
 const inputClassName =
   "w-full rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
 
-export default function JobForm({ loading, error, onSubmit }: JobFormProps) {
+export default function JobForm({
+  loading,
+  error,
+  onSubmit,
+  initialValues,
+  submitLabel = "Publish job",
+}: JobFormProps) {
   return (
     <form
       onSubmit={onSubmit}
@@ -22,6 +38,7 @@ export default function JobForm({ loading, error, onSubmit }: JobFormProps) {
           Job title
           <input
             name="title"
+            defaultValue={initialValues?.title}
             placeholder="e.g. Frontend Developer"
             required
             className={`${inputClassName} mt-2`}
@@ -31,6 +48,7 @@ export default function JobForm({ loading, error, onSubmit }: JobFormProps) {
           Company
           <input
             name="company"
+            defaultValue={initialValues?.company}
             placeholder="Company name"
             required
             className={`${inputClassName} mt-2`}
@@ -40,6 +58,7 @@ export default function JobForm({ loading, error, onSubmit }: JobFormProps) {
           Location
           <input
             name="location"
+            defaultValue={initialValues?.location}
             placeholder="Dhaka, Bangladesh"
             required
             className={`${inputClassName} mt-2`}
@@ -49,6 +68,7 @@ export default function JobForm({ loading, error, onSubmit }: JobFormProps) {
           Salary
           <input
             name="salary"
+            defaultValue={initialValues?.salary ?? ""}
             placeholder="e.g. ৳50,000/month"
             className={`${inputClassName} mt-2`}
           />
@@ -56,7 +76,11 @@ export default function JobForm({ loading, error, onSubmit }: JobFormProps) {
       </div>
       <label className="block font-medium text-slate-700">
         Employment type
-        <select name="type" className={`${inputClassName} mt-2`}>
+        <select
+          name="type"
+          defaultValue={initialValues?.type ?? "FULL_TIME"}
+          className={`${inputClassName} mt-2`}
+        >
           <option value="FULL_TIME">Full time</option>
           <option value="PART_TIME">Part time</option>
           <option value="REMOTE">Remote</option>
@@ -70,6 +94,7 @@ export default function JobForm({ loading, error, onSubmit }: JobFormProps) {
           required
           minLength={20}
           rows={6}
+          defaultValue={initialValues?.description}
           placeholder="Describe the role, responsibilities, and expectations."
           className={`${inputClassName} mt-2`}
         />
@@ -79,6 +104,7 @@ export default function JobForm({ loading, error, onSubmit }: JobFormProps) {
         <input
           name="skills"
           required
+          defaultValue={initialValues?.skills.join(", ")}
           placeholder="React, TypeScript, PostgreSQL"
           className={`${inputClassName} mt-2`}
         />
@@ -95,7 +121,7 @@ export default function JobForm({ loading, error, onSubmit }: JobFormProps) {
         disabled={loading}
         className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {loading ? "Publishing..." : "Publish job"}
+        {loading ? "Saving..." : submitLabel}
       </button>
     </form>
   );

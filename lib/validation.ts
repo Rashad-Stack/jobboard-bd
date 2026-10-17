@@ -10,6 +10,10 @@ export const jobSchema = z.object({
   skills: z.array(z.string().trim().min(1).max(40)).min(1).max(20),
 });
 
+export const jobUpdateSchema = jobSchema.partial().extend({
+  status: z.enum(["OPEN", "CLOSED"]).optional(),
+});
+
 export const profileSchema = z.object({
   skills: z.array(z.string().trim().min(1).max(40)).max(30),
   bio: z.string().trim().max(1000).optional(),

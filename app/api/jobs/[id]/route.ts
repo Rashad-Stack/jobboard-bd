@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session-user";
-import { jobSchema } from "@/lib/validation";
+import { jobUpdateSchema } from "@/lib/validation";
 
 type Context = { params: Promise<{ id: string }> };
 
@@ -27,7 +27,7 @@ export async function PATCH(req: Request, { params }: Context) {
     if (!user || (user.role !== "ADMIN" && existing.employerId !== user.id)) {
       return NextResponse.json({ error: "You do not own this job." }, { status: 403 });
     }
-    const result = jobSchema.partial().safeParse(await req.json());
+    const result = jobUpdateSchema.safeParse(await req.json());
     if (!result.success)
       return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
     const job = await prisma.job.update({ where: { id }, data: result.data });

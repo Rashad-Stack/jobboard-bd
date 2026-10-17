@@ -33,6 +33,34 @@ export default function EmployerJobs() {
     void load();
   }, []);
 
+  async function updateStatus(job: Job) {
+    const nextStatus = job.status === "OPEN" ? "CLOSED" : "OPEN";
+    const response = await fetch(`/api/jobs/${job.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: nextStatus }),
+    });
+    const body = await response.json();
+    if (!response.ok) {
+      setError(body.error || "Unable to update job status.");
+      return;
+    }
+    setJobs((current) =>
+      current.map((item) => (item.id === job.id ? { ...item, status: nextStatus } : item)),
+    );
+  }
+
+  async function deleteJob(job: Job) {
+    if (!window.confirm(`Delete "${job.title}"? This cannot be undone.`)) return;
+    const response = await fetch(`/api/jobs/${job.id}`, { method: "DELETE" });
+    const body = await response.json();
+    if (!response.ok) {
+      setError(body.error || "Unable to delete job.");
+      return;
+    }
+    setJobs((current) => current.filter((item) => item.id !== job.id));
+  }
+
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-10">
       <PageHeader
@@ -90,12 +118,34 @@ export default function EmployerJobs() {
                   {job._count.applications} application(s)
                 </p>
               </div>
-              <Link
-                href={`/employer/jobs/${job.id}/applicants`}
-                className="rounded-lg border border-slate-300 px-3 py-2 text-center text-sm font-semibold text-slate-700 hover:border-slate-900 hover:text-slate-900"
-              >
-                View applicants
-              </Link>
+              <div className="grid grid-cols-2 gap-2 sm:w-64">
+                <Link
+                  href={`/employer/jobs/${job.id}/applicants`}
+                  className="rounded-lg border border-slate-300 px-3 py-2 text-center text-sm font-semibold text-slate-700 hover:border-slate-900 hover:text-slate-900"
+                >
+                  Applicants
+                </Link>
+                <Link
+                  href={`/employer/jobs/${job.id}/edit`}
+                  className="rounded-lg border border-blue-200 px-3 py-2 text-center text-sm font-semibold text-blue-700 hover:border-blue-500"
+                >
+                  Edit
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => void updateStatus(job)}
+                  className="rounded-lg border border-amber-200 px-3 py-2 text-sm font-semibold text-amber-700 hover:border-amber-500"
+                >
+                  {job.status === "OPEN" ? "Close job" : "Reopen"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void deleteJob(job)}
+                  className="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 hover:border-red-500"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>
