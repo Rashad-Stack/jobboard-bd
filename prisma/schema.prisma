@@ -4,8 +4,7 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -13,9 +12,74 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String        @id @default(cuid())
+  name         String?
+  email        String        @unique
+  password     String
+  role         Role          @default(JOB_SEEKER)
+  profile      Profile?
+  applications Application[]
+  jobs         Job[]
+  createdAt    DateTime      @default(now())
+}
+
+model Profile {
+  id     String   @id @default(cuid())
+  userId String   @unique
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills String[]
+  bio    String?
+}
+
+model Job {
+  id           String        @id @default(cuid())
+  title        String
+  description  String
+  company      String
+  location     String
+  type         JobType
+  salary       String?
+  skills       String[]
+  status       JobStatus     @default(OPEN)
+  employerId   String
+  employer     User          @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  applications Application[]
+  createdAt    DateTime      @default(now())
+}
+
+model Application {
+  id        String    @id @default(cuid())
+  jobId     String
+  job       Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    AppStatus @default(PENDING)
+  createdAt DateTime  @default(now())
+
+  @@unique([jobId, userId]) // prevents duplicate applications
+}
+
+enum Role {
+  JOB_SEEKER
+  EMPLOYER
+  ADMIN
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  REMOTE
+  CONTRACT
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+}
+
+enum AppStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
 }
