@@ -1,4 +1,5 @@
 import { openai } from "@/lib/openai";
+import OpenAI from "openai";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -78,6 +79,32 @@ Rank by matchScore descending.`;
 
     return NextResponse.json(parsed.data, { status: 200 });
   } catch (error) {
+    if (error instanceof OpenAI.APIError) {
+      if (error.code === "credit_balance_exhausted") {
+        console.error("AI Match unavailable: OpenAI credits are exhausted.");
+        return NextResponse.json(
+          {
+            error: "AI matching is temporarily unavailable because the AI service has no credits.",
+          },
+          { status: 503 },
+        );
+      }
+
+      if (error.status === 429) {
+        console.error("AI Match rate limited by OpenAI.");
+        return NextResponse.json(
+          { error: "AI matching is busy right now. Please try again in a moment." },
+          { status: 429 },
+        );
+      }
+
+      console.error("AI Match provider error:", error.status, error.code);
+      return NextResponse.json(
+        { error: "The AI matching service is temporarily unavailable." },
+        { status: 502 },
+      );
+    }
+
     console.error("AI Match error:", error);
     return NextResponse.json({ error: "Failed to generate AI matches" }, { status: 500 });
   }

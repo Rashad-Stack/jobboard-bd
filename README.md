@@ -35,6 +35,19 @@ password `Password123!`:
 
 Run `bun run seed` again whenever you need to restore the demo records.
 
+### Demo navigation
+
+After signing in, the navigation changes according to the account role:
+
+- **Job seekers** see `Dashboard`, `AI Match`, and `Profile`.
+- **Employers** see `Employer dashboard` and `Profile`.
+- Everyone can access `Browse jobs`.
+
+The AI matching page is available to authenticated job seekers at
+`http://localhost:3000/ai-match`, or through the `AI Match` link in the top
+navigation. Employers cannot use this feature because it is designed to match
+seeker skills against open jobs.
+
 For Windows PowerShell, copy the environment template manually:
 
 ```powershell
@@ -65,7 +78,7 @@ Never commit `.env` or expose API keys in screenshots, issue comments, or chat. 
 | `/auth/login` | Credentials login |
 | `/dashboard` | Seeker application history |
 | `/profile` | Skills and bio |
-| `/ai-match` | AI-ranked open jobs |
+| `/ai-match` | Job-seeker-only AI-ranked open jobs |
 | `/employer/jobs` | Employer jobs and application counts |
 | `/employer/jobs/new` | Create a job |
 | `/employer/jobs/[id]/applicants` | Review and update applications |
@@ -81,7 +94,16 @@ Never commit `.env` or expose API keys in screenshots, issue comments, or chat. 
 
 ## AI matching
 
-The seeker skills array and all open jobs are sent to GPT-4o. The response is validated before it reaches the UI and must contain `jobId`, `title`, a `0-100` score, and a reason. The feature is keyword-oriented and does not infer seniority or years of experience; it is limited to currently open jobs and requires an OpenAI API key.
+Open the `AI Match` link as a job seeker, or visit `/ai-match` directly. The
+page loads the seeker's profile skills and allows temporary skills to be added
+or removed before matching. The skills array and all open jobs are sent to
+GPT-4o through `POST /api/ai/match`.
+
+The response is validated before it reaches the UI and must contain `jobId`,
+`title`, a `0-100` score, and a reason. The feature is keyword-oriented and
+does not infer seniority or years of experience; it is limited to currently
+open jobs and requires an OpenAI API key. Only users with the `JOB_SEEKER`
+role can access the matching API.
 
 ## Demo preparation
 

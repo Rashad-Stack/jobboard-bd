@@ -13,6 +13,7 @@ export default function AIMatchPage() {
   const [skillInput, setSkillInput] = useState("");
   const [matches, setMatches] = useState<JobMatch[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // Fetch profile skills on load
@@ -39,6 +40,8 @@ export default function AIMatchPage() {
 
   const findMatches = async () => {
     setLoading(true);
+    setError("");
+    setMatches([]);
     try {
       const res = await fetch("/api/ai/match", {
         method: "POST",
@@ -46,9 +49,14 @@ export default function AIMatchPage() {
         body: JSON.stringify({ skills }),
       });
       const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Unable to generate job matches.");
+        return;
+      }
       setMatches(data.matches || []);
-    } catch (error) {
-      console.error("AI match error", error);
+    } catch (requestError) {
+      console.error("AI match request error", requestError);
+      setError("Unable to reach the AI matching service. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -99,6 +107,11 @@ export default function AIMatchPage() {
         >
           {loading ? "Analyzing & Matching Jobs..." : "Find My Best Jobs with AI"}
         </button>
+        {error && (
+          <p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+            {error}
+          </p>
+        )}
       </div>
 
       {/* Results Section */}
