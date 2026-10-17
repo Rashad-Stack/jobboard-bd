@@ -18,7 +18,9 @@ type Job = {
 export default function JobDetail({ params }: { params: Promise<{ id: string }> }) {
   const { data: session } = useSession();
   const [job, setJob] = useState<Job | null>(null);
-  const [message, setMessage] = useState("Loading job...");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   useEffect(() => {
     params.then(({ id }) =>
       fetch(`/api/jobs/${id}`)
@@ -26,9 +28,9 @@ export default function JobDetail({ params }: { params: Promise<{ id: string }> 
           const d = await r.json();
           if (!r.ok) throw new Error(d.error);
           setJob(d.job);
-          setMessage("");
         })
-        .catch((e) => setMessage(e.message)),
+        .catch((e) => setError(e.message || "Unable to load this job."))
+        .finally(() => setLoading(false)),
     );
   }, [params]);
   async function apply() {
@@ -37,10 +39,38 @@ export default function JobDetail({ params }: { params: Promise<{ id: string }> 
     const data = await res.json();
     setMessage(res.ok ? "Application submitted successfully." : data.error || "Unable to apply.");
   }
+  if (loading)
+    return (
+      <main className="mx-auto max-w-3xl px-4 py-12">
+        <div className="animate-pulse space-y-5" aria-label="Loading job details" aria-busy="true">
+          <div className="h-4 w-32 rounded bg-slate-200" />
+          <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
+            <div className="h-4 w-2/3 max-w-xs rounded bg-slate-200" />
+            <div className="mt-4 h-10 w-full max-w-2xl rounded bg-slate-200" />
+            <div className="mt-4 h-5 w-3/4 max-w-md rounded bg-slate-200" />
+            <div className="mt-8 space-y-3">
+              <div className="h-4 w-full rounded bg-slate-200" />
+              <div className="h-4 w-11/12 rounded bg-slate-200" />
+              <div className="h-4 w-10/12 rounded bg-slate-200" />
+            </div>
+            <div className="mt-8 flex gap-2">
+              <div className="h-8 w-24 rounded-full bg-slate-200" />
+              <div className="h-8 w-28 rounded-full bg-slate-200" />
+              <div className="h-8 w-20 rounded-full bg-slate-200" />
+            </div>
+          </div>
+        </div>
+      </main>
+    );
   if (!job)
     return (
       <main className="mx-auto max-w-3xl px-4 py-12">
-        <p>{message}</p>
+        <div role="alert" className="rounded-xl bg-red-50 p-5 text-red-700">
+          {error || "Unable to load this job."}
+        </div>
+        <Link href="/jobs" className="mt-5 inline-flex text-sm font-semibold text-blue-700">
+          Back to jobs
+        </Link>
       </main>
     );
   return (

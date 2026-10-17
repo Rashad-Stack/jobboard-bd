@@ -16,7 +16,13 @@ export async function GET(req: Request) {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { profile: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        profile: true,
+      },
     });
 
     if (!user) {
@@ -59,7 +65,15 @@ export async function PATCH(req: Request) {
     });
 
     return NextResponse.json(
-      { message: "Profile updated successfully", updatedProfile },
+      {
+        message: "Profile updated successfully",
+        profile: {
+          id: updatedProfile.id,
+          userId: updatedProfile.userId,
+          skills: updatedProfile.skills,
+          bio: updatedProfile.bio,
+        },
+      },
       { status: 200 },
     );
   } catch (error) {
