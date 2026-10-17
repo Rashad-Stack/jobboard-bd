@@ -30,14 +30,14 @@ export default function RegisterPage() {
           required
           minLength={2}
           placeholder="Full name"
-          className="w-full rounded border p-3"
+          className="w-full rounded border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-500"
         />
         <input
           name="email"
           type="email"
           required
           placeholder="Email"
-          className="w-full rounded border p-3"
+          className="w-full rounded border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-500"
         />
         <input
           name="password"
@@ -45,9 +45,12 @@ export default function RegisterPage() {
           minLength={8}
           required
           placeholder="Password (8+ characters)"
-          className="w-full rounded border p-3"
+          className="w-full rounded border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-500"
         />
-        <select name="role" className="w-full rounded border p-3">
+        <select
+          name="role"
+          className="w-full rounded border border-slate-300 bg-white p-3 text-slate-900"
+        >
           <option value="JOB_SEEKER">I am looking for a job</option>
           <option value="EMPLOYER">I am hiring</option>
         </select>

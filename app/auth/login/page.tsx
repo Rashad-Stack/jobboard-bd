@@ -30,14 +30,14 @@ export default function LoginPage() {
           type="email"
           required
           placeholder="Email"
-          className="w-full rounded border p-3"
+          className="w-full rounded border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-500"
         />
         <input
           name="password"
           type="password"
           required
           placeholder="Password"
-          className="w-full rounded border p-3"
+          className="w-full rounded border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-500"
         />
         {error && <p className="text-sm text-red-600">{error}</p>}
         <button

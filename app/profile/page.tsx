@@ -45,7 +45,7 @@ export default function ProfilePage() {
             value={skills}
             onChange={(e) => setSkills(e.target.value)}
             placeholder="React, TypeScript, PostgreSQL"
-            className="mt-2 w-full rounded border p-3"
+            className="mt-2 w-full rounded border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-500"
           />
         </label>
         <label className="block font-medium">
@@ -54,7 +54,7 @@ export default function ProfilePage() {
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             rows={5}
-            className="mt-2 w-full rounded border p-3"
+            className="mt-2 w-full rounded border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-500"
           />
         </label>
         <button className="rounded bg-blue-600 px-5 py-3 font-semibold text-white">
