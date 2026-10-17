@@ -68,9 +68,9 @@ export default function EmployerJobs() {
             key={job.id}
             className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between"
           >
-            <div>
+            <div className="text-slate-900">
               <div className="flex items-center gap-3">
-                <h2 className="font-semibold text-slate-900">{job.title}</h2>
+                <h2 className="font-semibold text-slate-950">{job.title}</h2>
                 <span className="rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
                   {job.status}
                 </span>

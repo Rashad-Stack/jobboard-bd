@@ -74,8 +74,8 @@ export default function SeekerDashboard() {
               key={app.id}
               className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between"
             >
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900">{app.job.title}</h3>
+              <div className="text-slate-900">
+                <h3 className="text-lg font-semibold text-slate-950">{app.job.title}</h3>
                 <p className="mt-1 text-sm text-slate-600">
                   {app.job.company} · Applied {new Date(app.createdAt).toLocaleDateString()}
                 </p>

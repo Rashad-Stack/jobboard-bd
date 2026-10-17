@@ -38,6 +38,11 @@ textarea::placeholder {
   opacity: 1;
 }
 
+option {
+  color: #0f172a;
+  background-color: #ffffff;
+}
+
 input:focus,
 select:focus,
 textarea:focus {

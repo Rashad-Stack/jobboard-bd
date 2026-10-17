@@ -84,19 +84,19 @@ export default function JobListingsPage() {
           placeholder="Job title or keywords..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          className="rounded-lg border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
         />
         <input
           type="text"
           placeholder="Location (e.g. Dhaka)"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className="rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          className="rounded-lg border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
         />
         <select
           value={type}
           onChange={(e) => setType(e.target.value)}
-          className="rounded-lg border border-slate-300 p-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          className="rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
         >
           <option value="">All Job Types</option>
           <option value="FULL_TIME">Full Time</option>
