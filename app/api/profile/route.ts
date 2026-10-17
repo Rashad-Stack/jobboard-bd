@@ -1,11 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import { profileSchema } from "@/lib/validation";
 
 // GET /api/profile - Get current user profile + skills[cite: 7]
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -31,24 +33,28 @@ export async function GET(req: Request) {
 // PATCH /api/profile - Update profile skills, bio[cite: 7]
 export async function PATCH(req: Request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const userId = (session.user as { id: string }).id;
-    const { skills, bio } = await req.json();
+    const userId = session.user.id;
+    const result = profileSchema.safeParse(await req.json());
+    if (!result.success) {
+      return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
+    }
+    const { skills, bio } = result.data;
 
     const updatedProfile = await prisma.profile.upsert({
       where: { userId },
       update: {
-        ...(skills ? { skills } : {}),
+        skills,
         ...(bio !== undefined ? { bio } : {}),
       },
       create: {
         userId,
-        skills: skills || [],
-        bio: bio || "",
+        skills,
+        bio: bio ?? "",
       },
     });
 

@@ -1,20 +1,20 @@
 import { openai } from "@/lib/openai";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession();
-    if (!session || (session.user as { role?: string }).role !== "JOB_SEEKER") {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== "JOB_SEEKER") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { skills } = await req.json();
-
-    if (!skills || !Array.isArray(skills) || skills.length === 0) {
-      return NextResponse.json({ error: "Skills array is required" }, { status: 400 });
-    }
+    const input = z.object({ skills: z.array(z.string().trim().min(1).max(40)).min(1).max(30) }).safeParse(await req.json());
+    if (!input.success) return NextResponse.json({ error: "At least one valid skill is required." }, { status: 400 });
+    const { skills } = input.data;
 
     // Fetch all OPEN jobs from database[cite: 10]
     const openJobs = await prisma.job.findMany({
@@ -43,9 +43,17 @@ Rank by matchScore descending.`;
       response_format: { type: "json_object" },
     });
 
-    const result = JSON.parse(completion.choices[0].message.content || '{"matches":[]}');
+    const parsed = z.object({
+      matches: z.array(z.object({
+        jobId: z.string(),
+        title: z.string(),
+        matchScore: z.number().min(0).max(100),
+        reason: z.string(),
+      })),
+    }).safeParse(JSON.parse(completion.choices[0].message.content || '{"matches":[]}'));
+    if (!parsed.success) return NextResponse.json({ error: "The AI returned an invalid match response." }, { status: 502 });
 
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json(parsed.data, { status: 200 });
   } catch (error) {
     console.error("AI Match error:", error);
     return NextResponse.json({ error: "Failed to generate AI matches" }, { status: 500 });

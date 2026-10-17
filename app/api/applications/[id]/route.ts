@@ -1,19 +1,20 @@
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(
   req: Request,
-  { params }: { params: { jobId: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession();
-    const user = session?.user as { role?: string; id?: string } | undefined;
+    const session = await getServerSession(authOptions);
+    const user = session?.user;
     if (!user || user.role !== "JOB_SEEKER" || !user.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const jobId = params.jobId;
+    const { id: jobId } = await params;
     const userId = user.id;
 
    

@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# JobBoard BD
 
-## Getting Started
+JobBoard BD is a full-stack job marketplace for Bangladesh. Job seekers can search and apply for jobs, maintain a skills profile, track application status, and receive AI-powered recommendations. Employers can publish jobs and manage their application pipeline.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 App Router, TypeScript, Tailwind CSS
+- NextAuth Credentials with JWT sessions and bcrypt password hashing
+- Prisma 7 with PostgreSQL/Supabase and the `@prisma/adapter-pg` driver
+- Zod request validation
+- OpenAI GPT-4o structured job matching
+- Vitest unit tests
+- Vercel deployment
+
+## Local setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env
+bun install
+bunx --bun prisma migrate dev --name init
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app runs at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For Windows PowerShell, copy the environment template manually:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```powershell
+Copy-Item .env.example .env
+```
 
-## Learn More
+Run verification:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+bun run build
+bunx vitest run
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`DATABASE_URL` should use the Supabase pooled connection for application traffic. Prisma migration configuration automatically switches that URL to the direct PostgreSQL port for migration locks.
 
-## Deploy on Vercel
+Never commit `.env` or expose API keys in screenshots, issue comments, or chat. Rotate any credential that has been exposed.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Main routes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Route | Purpose |
+| --- | --- |
+| `/` | Landing page |
+| `/jobs` | Public search and filters |
+| `/jobs/[id]` | Job details and seeker application |
+| `/auth/register` | Seeker/employer registration |
+| `/auth/login` | Credentials login |
+| `/dashboard` | Seeker application history |
+| `/profile` | Skills and bio |
+| `/ai-match` | AI-ranked open jobs |
+| `/employer/jobs` | Employer jobs and application counts |
+| `/employer/jobs/new` | Create a job |
+| `/employer/jobs/[id]/applicants` | Review and update applications |
+
+## Business rules
+
+- Applications start as `PENDING`.
+- Employers can move applications to `REVIEWED`, then `ACCEPTED` or `REJECTED`.
+- A final status cannot be changed.
+- A seeker cannot apply to a closed job or apply twice to the same job.
+- Employers can only edit, delete, and manage applications for their own jobs.
+- All mutation payloads are validated with Zod.
+
+## AI matching
+
+The seeker skills array and all open jobs are sent to GPT-4o. The response is validated before it reaches the UI and must contain `jobId`, `title`, a `0-100` score, and a reason. The feature is keyword-oriented and does not infer seniority or years of experience; it is limited to currently open jobs and requires an OpenAI API key.
+
+## Demo preparation
+
+Create one job-seeker account and one employer account through the registration page. The employer can post a job, while the seeker can add skills, apply, view the dashboard, and run AI matching. Keep production secrets in Vercel Environment Variables rather than in the repository.

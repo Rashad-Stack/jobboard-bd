@@ -8,8 +8,7 @@ describe('Application Workflow Rules', () => {
   });
 
   it('should prevent applying to a CLOSED job', () => {
-    const jobStatus: 'OPEN' | 'CLOSED' = 'CLOSED';
-    const canApply = jobStatus === 'OPEN';
-    expect(canApply).toBe(false);
+    const canApply = (jobStatus: 'OPEN' | 'CLOSED') => jobStatus === 'OPEN';
+    expect(canApply('CLOSED')).toBe(false);
   });
 });
