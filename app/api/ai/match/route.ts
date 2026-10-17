@@ -20,7 +20,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "At least one valid skill is required." }, { status: 400 });
     const { skills } = input.data;
 
-    // Fetch all OPEN jobs from database[cite: 10]
     const openJobs = await prisma.job.findMany({
       where: { status: "OPEN" },
       select: {

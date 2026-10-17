@@ -58,7 +58,7 @@ Run verification:
 
 ```bash
 bun run build
-bunx vitest run
+bun run test
 ```
 
 ## Environment variables
@@ -81,7 +81,26 @@ Never commit `.env` or expose API keys in screenshots, issue comments, or chat. 
 | `/ai-match` | Job-seeker-only AI-ranked open jobs |
 | `/employer/jobs` | Employer jobs and application counts |
 | `/employer/jobs/new` | Create a job |
+| `/employer/jobs/[id]/edit` | Edit, close, or reopen a job |
 | `/employer/jobs/[id]/applicants` | Review and update applications |
+
+## Assessment coverage
+
+The implementation covers the assessment workflow end to end:
+
+- **Authentication:** registration, credentials login, bcrypt password hashing,
+  JWT sessions, and role-aware navigation.
+- **Job marketplace:** public job browsing, search/filter controls, job details,
+  and responsive empty/loading/error states.
+- **Employer workflow:** create, edit, delete, close/reopen jobs, view
+  applicants, and update application statuses.
+- **Seeker workflow:** maintain a profile, apply once per job, view application
+  history, and track application status.
+- **AI feature:** authenticated seeker-only matching against open jobs, validated
+  structured responses, and user-facing provider/quota error handling.
+- **Engineering quality:** Prisma relations and constraints, Zod validation,
+  reusable UI components, skeleton loading states, custom 404/error pages,
+  formatting, unit tests, and production build verification.
 
 ## Business rules
 
@@ -107,4 +126,26 @@ role can access the matching API.
 
 ## Demo preparation
 
-Create one job-seeker account and one employer account through the registration page. The employer can post a job, while the seeker can add skills, apply, view the dashboard, and run AI matching. Keep production secrets in Vercel Environment Variables rather than in the repository.
+For an assessment demonstration, use the seeded accounts:
+
+1. Sign in as `employer@jobboard.demo` with password `Password123!`.
+2. Open **Employer dashboard**, create or edit a job, close/reopen it, and
+   review applicant status changes.
+3. Sign out and sign in as `seeker@jobboard.demo` with password
+   `Password123!`.
+4. Browse jobs, open a job detail page, apply, check **Dashboard**, update
+   **Profile**, and open **AI Match**.
+5. For live AI results, configure an OpenAI API key with available credits.
+
+Run `bun run seed` to restore the repeatable demo records. Keep production
+secrets in Vercel Environment Variables rather than in the repository.
+
+## Deployment checklist
+
+Before submission:
+
+1. Configure `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, and
+   `OPENAI_API_KEY` in the deployment provider.
+2. Run `bun run format:check`, `bun run test`, and `bun run build`.
+3. Test both seeded roles on the deployed URL.
+4. Confirm that `.env` and API keys are not committed.

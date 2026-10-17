@@ -4,7 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { profileSchema } from "@/lib/validation";
 
-// GET /api/profile - Get current user profile + skills[cite: 7]
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -36,7 +35,6 @@ export async function GET(req: Request) {
   }
 }
 
-// PATCH /api/profile - Update profile skills, bio[cite: 7]
 export async function PATCH(req: Request) {
   try {
     const session = await getServerSession(authOptions);
