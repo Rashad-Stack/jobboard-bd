@@ -18,10 +18,22 @@ JobBoard BD is a full-stack job marketplace for Bangladesh. Job seekers can sear
 cp .env.example .env
 bun install
 bunx --bun prisma migrate dev --name init
+bun run seed
 bun run dev
 ```
 
 The app runs at `http://localhost:3000`.
+
+The seed command is repeatable and creates demo employers, seekers, jobs, profiles,
+and applications without resetting existing data. All seeded accounts use the
+password `Password123!`:
+
+- `employer@jobboard.demo`
+- `hiring@techcorp.demo`
+- `seeker@jobboard.demo`
+- `candidate@jobboard.demo`
+
+Run `bun run seed` again whenever you need to restore the demo records.
 
 For Windows PowerShell, copy the environment template manually:
 
