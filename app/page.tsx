@@ -1,6 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
+  const { data: session } = useSession();
+  const dashboardHref = session?.user.role === "EMPLOYER" ? "/employer/jobs" : "/dashboard";
+
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 items-center px-4 py-20">
       <div className="max-w-3xl">
@@ -16,9 +22,21 @@ export default function Home() {
           <Link href="/jobs" className="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white">
             Explore jobs
           </Link>
-          <Link href="/auth/register" className="rounded-lg border px-5 py-3 font-semibold">
-            Create account
-          </Link>
+          {session ? (
+            <Link
+              href={dashboardHref}
+              className="rounded-lg border border-slate-300 px-5 py-3 font-semibold text-slate-700 hover:border-slate-500 hover:text-slate-950"
+            >
+              Go to dashboard
+            </Link>
+          ) : (
+            <Link
+              href="/auth/register"
+              className="rounded-lg border border-slate-300 px-5 py-3 font-semibold text-slate-700 hover:border-slate-500 hover:text-slate-950"
+            >
+              Create account
+            </Link>
+          )}
         </div>
       </div>
     </main>
