@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -18,7 +20,7 @@ export default function RegisterPage() {
     });
     const data = await res.json();
     if (!res.ok) setError(data.error || "Unable to register.");
-    else window.location.href = "/auth/login";
+    else router.push("/auth/login");
     setLoading(false);
   }
   return (

@@ -2,9 +2,11 @@
 
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -18,7 +20,7 @@ export default function LoginPage() {
       redirect: false,
     });
     if (result?.error) setError("Invalid email or password.");
-    else window.location.href = "/dashboard";
+    else router.push("/dashboard");
     setLoading(false);
   }
   return (
