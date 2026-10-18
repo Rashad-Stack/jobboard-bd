@@ -1,9 +1,9 @@
+import { authOptions } from "@/lib/auth";
 import { openai } from "@/lib/openai";
-import OpenAI from "openai";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import OpenAI from "openai";
 import { z } from "zod";
 
 export async function POST(req: Request) {
@@ -16,8 +16,10 @@ export async function POST(req: Request) {
     const input = z
       .object({ skills: z.array(z.string().trim().min(1).max(40)).min(1).max(30) })
       .safeParse(await req.json());
+
     if (!input.success)
       return NextResponse.json({ error: "At least one valid skill is required." }, { status: 400 });
+
     const { skills } = input.data;
 
     const openJobs = await prisma.job.findMany({

@@ -1,10 +1,10 @@
-import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 import { profileSchema } from "@/lib/validation";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -12,7 +12,6 @@ export async function GET(req: Request) {
     }
 
     const userId = (session.user as { id: string }).id;
-
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
